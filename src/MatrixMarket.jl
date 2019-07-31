@@ -158,16 +158,15 @@ function mmwrite(filename, matrix :: SparseMatrixCSC)
            eltype(matrix) <: AbstractFloat ? "real" :
            eltype(matrix) <: Complex ? "complex" :
            error("Invalid matrix type")
-      sym = ishermitian(matrix) ? "hermitian" :
-            issymmetric(matrix) ? "symmetric" :
+      sym = issymmetric(matrix) ? "symmetric" :
+            ishermitian(matrix) ? "hermitian" :
             "general"
-      symb = issymmetric(matrix)
 
       # write mm header
       write(file, "%%MatrixMarket matrix coordinate $elem $sym\n")
 
-      # only use lower triangular part of symmetric matrices
-      if symb
+      # only use lower triangular part of symmetric and Hermitian matrices
+      if issymmetric(matrix) || ishermitian(matrix)
           matrix = tril(matrix)
       end
 
